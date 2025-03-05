@@ -11,7 +11,7 @@
     @endif
 
     <!-- Survey Form Container -->
-    <div class="card mt-4 p-4">
+    <div class="card mt-4 p-4 shadow">
         <div class="card-body">
             <h1 class="text-center mb-4">Client Satisfaction Survey - Step 3</h1>
             <hr>
@@ -19,18 +19,23 @@
             <form action="{{ route('survey.storeFinal') }}" method="POST">
                 @csrf
 
+                <input type="hidden" name="service_satisfaction" id="averageInput">
+
                 <h5 class="text-muted text-center mb-4 h-100">
                     Please rate your satisfaction for the following aspects of the service you received. <br>
-                    <small>(1 = Very Dissatisfied, 5 = Very Satisfied)</small>
+                    <small>(☹️ = Very Dissatisfied, 😀 = Very Satisfied)</small>
                 </h5>
 
                 <div class="table-responsive">
                     <table class="table table-bordered text-center align-middle">
                         <thead class="table-primary">
                             <tr>
-                                <th class="text-center">Question</th>
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <th>{{ $i }}</th>
+                                @php
+                                    $emoji = ["☹️","🙁","😐","🙂","😀"];
+                                @endphp
+                                <th class="text-center">Questions</th>
+                                @for ($i = 0; $i < count($emoji); $i++)
+                                    <th>{{ $emoji[$i] }}</th>
                                 @endfor
                             </tr>
                         </thead>
@@ -61,15 +66,53 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <label for="comment">Comment: </label>
+                    <textarea name="comment" id="comment" class="form-control"></textarea>
                 </div>
 
-                <!-- Navigation Buttons -->
+                <h4 id="averageScore" class="text-center mt-3">Average Score: N/A</h4>
+
                 <div class="d-flex justify-content-between mt-4">
                     <a class="btn btn-outline-primary px-4" href="{{ route('survey.step2') }}">Back</a>
-                    <button type="submit" class="btn btn-primary px-4">Submit Survey</button>
+                    <button class="btn btn-primary" type="submit" id="submitBtn">Submit</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        const submitBtn = document.getElementById("submitBtn");
+        const averageInput = document.getElementById("averageInput");
+        const averageScoreDisplay = document.getElementById("averageScore");
+
+        function calculateAverage() {
+            let total = 0;
+            let count = 0;
+
+            document.querySelectorAll("input[type='radio']:checked").forEach(input => {
+                total += parseInt(input.value);
+                count++;
+            });
+
+            let average = count > 0 ? (total / count).toFixed(2) : "N/A";
+
+            // Update the hidden input and display
+            averageInput.value = count > 0 ? average : "";
+            averageScoreDisplay.innerText = `Average Score: ${average}`;
+        }
+
+        document.querySelectorAll("input[type='radio']").forEach(input => {
+            input.addEventListener("change", calculateAverage);
+        });
+
+        form.addEventListener("submit", function () {
+            submitBtn.disabled = true;
+        });
+    });
+</script>
 @endsection
+
+
+<!-- ☹️🙁😐🙂😀 -->

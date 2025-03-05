@@ -7,6 +7,7 @@
 <div class="d-flex justify-content-center align-items-center" style="margin-top: 200px;">
     <div class="container shadow p-4 rounded bg-white" style="max-width: 700px;">
         <h1 class="text-center">Client Satisfaction Survey - Step 1</h1>
+        <hr>
         <br>
 
         @if (session('success'))
@@ -40,8 +41,8 @@
             </div>
 
             <div class="d-flex gap-3">
-                <div class="mb-3 flex-fill">x
-                    <label class="form-label" for="date">Date:</label>
+                <div class="mb-3 flex-fill">
+                    <label class="form-label" for="date">Date Visited:</label>
                     <input class="form-control" type="date" id="date" name="date" value="{{ old('date') }}" required>
                 </div>
                 <div class="mb-3 flex-fill">
