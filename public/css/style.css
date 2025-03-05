@@ -1,0 +1,27 @@
+/* Ensure the body has no unwanted centering */
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgb(240, 231, 225);
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    margin-left: 280px;
+    background-color: #efac87;
+    color: #302f2f;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    z-index: 1; /* Lower than sidebar */
+}
+
+
+
+.main-content {
+    margin-left: 280px; /* Push content to the right */
+    padding: 100px 20px;
+    margin-top: 60px; /* Prevents content from being hidden behind header */
+}
