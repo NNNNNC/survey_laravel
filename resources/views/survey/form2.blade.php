@@ -3,8 +3,25 @@
 @section('title', 'Client Satisfaction Survey - Step 2')
 
 @section('content')
-<div class="d-flex justify-content-center align-items-center" style="margin-top: 120px; padding-bottom: 50px;">
-    <div class="container shadow p-5 rounded bg-white" style="max-width: 900px;">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600;0,700;0,800;1,500;1,600&display=swap');
+
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    h1,
+    label,
+    .form-check-label {
+        font-weight: 500;
+    }
+
+    .btn {
+        font-weight: 700;
+    }
+</style>
+<div class="d-flex justify-content-center align-items-center" style="margin-top: 150px; padding-bottom: 50px;">
+    <div class="container shadow p-5 rounded bg-white" style="max-width: 800px;">
         <h1 class="text-center mb-4">Client Satisfaction Survey - Step 2</h1>
         <hr>
 
@@ -82,6 +99,11 @@
                     <label class="form-check-label" for="h4">N/A (Hindi naaangkop)</label>
                 </div>
             </fieldset>
+
+            <!-- Hidden inputs to ensure form submission when a4 is selected -->
+            <input type="hidden" name="visibility" id="hidden_visibility" value="0">
+            <input type="hidden" name="helpfulness" id="hidden_helpfulness" value="0">
+
             <br>
             <div class="d-flex justify-content-between mt-4">
                 <a class="btn btn-outline-primary" href="{{ route('survey.step1') }}">Back</a>
@@ -91,61 +113,63 @@
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const checkboxGroups = {
-        awareness: document.querySelectorAll(".awareness"),
-        visibility: document.querySelectorAll(".visibility"),
-        helpfulness: document.querySelectorAll(".helpfulness")
-    };
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkboxGroups = {
+            awareness: document.querySelectorAll(".awareness"),
+            visibility: document.querySelectorAll(".visibility"),
+            helpfulness: document.querySelectorAll(".helpfulness")
+        };
 
-    function allowSingleCheckbox(group) {
-        group.forEach(checkbox => {
-            checkbox.addEventListener("change", function () {
-                if (this.checked) {
-                    group.forEach(cb => {
-                        if (cb !== this) {
-                            cb.checked = false;
-                        }
+        function allowSingleCheckbox(group) {
+            group.forEach(checkbox => {
+                checkbox.addEventListener("change", function() {
+                    if (this.checked) {
+                        group.forEach(cb => {
+                            if (cb !== this) {
+                                cb.checked = false;
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        Object.values(checkboxGroups).forEach(group => allowSingleCheckbox(group));
+
+        const a4 = document.getElementById("a4");
+        const visibilityCheckboxes = checkboxGroups.visibility;
+        const helpfulnessCheckboxes = checkboxGroups.helpfulness;
+        const hiddenVisibility = document.getElementById("hidden_visibility");
+        const hiddenHelpfulness = document.getElementById("hidden_helpfulness");
+
+        checkboxGroups.awareness.forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+                if (this === a4 && this.checked) {
+                    visibilityCheckboxes.forEach(cb => {
+                        cb.checked = false;
+                        cb.disabled = true;
                     });
+                    helpfulnessCheckboxes.forEach(cb => {
+                        cb.checked = false;
+                        cb.disabled = true;
+                    });
+                    hiddenVisibility.value = "0";
+                    hiddenHelpfulness.value = "0";
+                } else if (this !== a4 && this.checked) {
+                    a4.checked = false;
+                    visibilityCheckboxes.forEach(cb => cb.disabled = false);
+                    helpfulnessCheckboxes.forEach(cb => cb.disabled = false);
                 }
             });
         });
-    }
 
-    // Initialize the checkbox groups
-    Object.values(checkboxGroups).forEach(group => allowSingleCheckbox(group));
-
-    // Special logic for awareness group
-    const a4 = document.getElementById("a4");
-    const visibilityCheckboxes = checkboxGroups.visibility;
-    const helpfulnessCheckboxes = checkboxGroups.helpfulness;
-
-    checkboxGroups.awareness.forEach(checkbox => {
-        checkbox.addEventListener("change", function () {
-            if (this === a4 && this.checked) {
-                visibilityCheckboxes.forEach(cb => {
-                    cb.checked = false;
-                    cb.disabled = true;
-                });
-                helpfulnessCheckboxes.forEach(cb => {
-                    cb.checked = false;
-                    cb.disabled = true;
-                });
-            } else if (this !== a4 && this.checked) {
-                a4.checked = false;
-                visibilityCheckboxes.forEach(cb => cb.disabled = false);
-                helpfulnessCheckboxes.forEach(cb => cb.disabled = false);
-            }
-        });
+        if (a4.checked) {
+            visibilityCheckboxes.forEach(cb => cb.disabled = true);
+            helpfulnessCheckboxes.forEach(cb => cb.disabled = true);
+            hiddenVisibility.value = "0";
+            hiddenHelpfulness.value = "0";
+        }
     });
-
-    // Disable groups if "I do not know what a CC is" is checked
-    if (a4.checked) {
-        visibilityCheckboxes.forEach(cb => cb.disabled = true);
-        helpfulnessCheckboxes.forEach(cb => cb.disabled = true);
-    }
-});
-
 </script>
 
 
