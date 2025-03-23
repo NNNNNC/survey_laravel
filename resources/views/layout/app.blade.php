@@ -47,7 +47,7 @@
 
     @include('includes.header')
 
-    <div class="container-fluid">
+    <div class="content">
         @yield('content')
     </div>
 

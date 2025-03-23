@@ -21,10 +21,10 @@ class SurveySeeder extends Seeder
            
         ];
 
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < 500; $i++) {
             $awareness = $faker->numberBetween(1, 4);
-            $visibility = ($awareness == 4) ? 0 : $faker->numberBetween(1, 5);
-            $helpfulness = ($awareness == 4) ? 0 : $faker->numberBetween(1, 4);
+            $visibility = ($awareness == 1) ? 0 : $faker->numberBetween(1, 5);
+            $helpfulness = ($awareness == 1) ? 0 : $faker->numberBetween(1, 4);
             
             // Pick a random office
             $officeId = $faker->numberBetween(1, 5);
