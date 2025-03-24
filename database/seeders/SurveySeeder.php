@@ -21,10 +21,10 @@ class SurveySeeder extends Seeder
            
         ];
 
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < 500; $i++) {
             $awareness = $faker->numberBetween(1, 4);
-            $visibility = ($awareness == 4) ? 0 : $faker->numberBetween(1, 5);
-            $helpfulness = ($awareness == 4) ? 0 : $faker->numberBetween(1, 4);
+            $visibility = ($awareness == 1) ? 0 : $faker->numberBetween(1, 5);
+            $helpfulness = ($awareness == 1) ? 0 : $faker->numberBetween(1, 4);
             
             // Pick a random office
             $officeId = $faker->numberBetween(1, 5);
@@ -33,7 +33,7 @@ class SurveySeeder extends Seeder
             $service = $faker->randomElement($officeServices[$officeId]);
 
             DB::table('surveys')->insert([
-                'client_type' => $faker->randomElement(['citizen', 'business', 'government']),
+                'client_type' => $faker->randomElement(['Citizen', 'Business', 'Government']),
                 'date' => $faker->dateTimeBetween('2023-01-01', '2024-12-31')->format('Y-m-d'),
                 'age' => $faker->numberBetween(20, 60),
                 'sex' => $faker->randomElement(['Male', 'Female']),

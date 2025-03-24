@@ -17,5 +17,5 @@ Route::group([
     $router->get('/', [DashboardController::class, 'index'])->name('dashboard');
     $router->resource('surveys', SurveyController::class);
     $router->resource('offices', OfficesController::class);
-    $router->get('/survey-data', [DashboardController::class, 'surveyDataByOffice']);
+    $router->get('/survey-data', [DashboardController::class, 'surveyDataByOffice'])->name('survey.data');
 });
