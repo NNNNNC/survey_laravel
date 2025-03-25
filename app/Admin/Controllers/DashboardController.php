@@ -87,13 +87,72 @@ class DashboardController extends AdminController
             '> 51'   => DB::table('surveys')->where('age', '>', 51)->when($officeId, fn($query) => $query->where('office_visited', $officeId))->count(),
         ];
 
+        // Define mappings for the ratings
+        $awarenessLabels = [
+
+            1 => "Do not know and did not see the office’s CC",
+            2 => "Knows what a CC but did not see the office’s CC",
+            3 => "Learned the CC by seeing the office’s CC",
+            4 => "Knows what a CC and saw the office’s CC"
+        ];
+
+        $visibilityLabels = [
+            0 => "N/A",
+            1 => "Not visible",
+            2 => "Difficult to see",
+            3 => "Somewhat easy to see",
+            4 => "Easy to see"
+        ];
+
+        $helpfulnessLabels = [
+            0 => "N/A",
+            1 => "Did not help",
+            2 => "Somewhat helped",
+            3 => "Helped very much"
+        ];
+
+        // Count values for awareness, visibility, and helpfulness
+        $ratingCounts = DB::table('surveys')
+            ->selectRaw("'awareness' as category, awareness as rating, COUNT(*) as count")
+            ->when($officeId, fn($query) => $query->where('office_visited', $officeId)) // Filter by office
+            ->groupBy('awareness')
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'visibility' as category, visibility as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId)) // Filter by office
+                    ->groupBy('visibility')
+            )
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'helpfulness' as category, helpfulness as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId)) // Filter by office
+                    ->groupBy('helpfulness')
+            )
+            ->orderBy('category')
+            ->orderBy('rating')
+            ->get();
+
+        // Transform numerical values into descriptive strings
+        $ratingCounts = $ratingCounts->map(function ($item) use ($awarenessLabels, $visibilityLabels, $helpfulnessLabels) {
+            if ($item->category === 'awareness') {
+                $item->rating = $awarenessLabels[$item->rating] ?? "Unknown";
+            } elseif ($item->category === 'visibility') {
+                $item->rating = $visibilityLabels[$item->rating] ?? "Unknown";
+            } elseif ($item->category === 'helpfulness') {
+                $item->rating = $helpfulnessLabels[$item->rating] ?? "Unknown";
+            }
+            return $item;
+        });
+
+
         return response()->json([
             'total_responses' => $totalResponses,
             'overall_satisfaction' => $overallSatisfaction ? $overallSatisfaction . '%' : 'N/A',
             'client_type_data' => $clientTypeData,
             'male_count' => $maleCount,
             'female_count' => $femaleCount,
-            'age_distribution' => $ageDistribution
+            'age_distribution' => $ageDistribution,
+            'rating_counts' => $ratingCounts
         ]);
     }
 }

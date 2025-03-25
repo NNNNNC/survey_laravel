@@ -63,24 +63,113 @@
     </div>
 </div>
 
+<canvas id="ratingsChart"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    let sexChart, ageChart, clientTypeChart;
+    let sexChart, ageChart, clientTypeChart, ratingsChart;
 
     function createCharts(data, clientData) {
         if (sexChart) sexChart.destroy();
         if (ageChart) ageChart.destroy();
         if (clientTypeChart) clientTypeChart.destroy();
+        if (ratingsChart) ratingsChart.destroy();
 
         const ctxSex = document.getElementById("sexChart").getContext("2d");
         const ctxAge = document.getElementById("ageChart").getContext("2d");
-        const ctxClientType = document.getElementById("clientTypeChart").getContext("2d");
+        const ctxClientType = document.getElementById("clientTypeChart")?.getContext("2d");
+        const ctxRatings = document.getElementById("ratingsChart")?.getContext("2d");
 
         // Handle missing or undefined age_distribution
         const ageLabels = data.age_distribution ? Object.keys(data.age_distribution) : [];
         const ageValues = data.age_distribution ? Object.values(data.age_distribution) : [];
+
+        // Bar Chart for Ratings
+        const categories = ["awareness", "visibility", "helpfulness"];
+
+        const ratingsMap = {
+            awareness: [
+                "Knows what a CC and saw the office’s CC",
+                "Knows what a CC but did not see the office’s CC",
+                "Learned the CC by seeing the office’s CC",
+                "Do not know and did not see the office’s CC"
+            ],
+            visibility: [
+                "N/A",
+                "Not visible",
+                "Difficult to see",
+                "Somewhat easy to see",
+                "Easy to see"
+            ],
+            helpfulness: [
+                "N/A",
+                "Did not help",
+                "Somewhat helped",
+                "Helped very much"
+            ]
+        };
+
+        // Assign colors for differentiation
+        const ratingColors = [
+            "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+            "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
+        ];
+
+        const datasets = [];
+        let colorIndex = 0;
+
+        // Loop through each category and rating to create datasets
+        categories.forEach(category => {
+            ratingsMap[category].forEach(rating => {
+                const count = (data.rating_counts || []).find(r => r.category === category && r.rating === rating)?.count || 0;
+
+                datasets.push({
+                    label: rating,
+                    data: categories.map(c => (c === category ? count : 0)), // Place count in correct category position
+                    backgroundColor: ratingColors[colorIndex % ratingColors.length] // Assign unique colors
+                });
+
+                colorIndex++;
+            });
+        });
+
+        ratingsChart = new Chart(ctxRatings, {
+            type: "bar",
+            data: {
+                labels: categories, // Awareness, Visibility, Helpfulness
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Categories"
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Count"
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: "right", // Move legend to the right
+                        align: "start", // Align legend items vertically
+                        labels: {
+                            boxWidth: 15, // Adjusts legend box size
+                            padding: 10, // Adds spacing between legend items
+                        }
+                    }
+                }
+            }
+        });
+
 
         // Doughnut Chart for Sex Distribution
         sexChart = new Chart(ctxSex, {
@@ -190,31 +279,54 @@
             });
         }
 
+
     }
 
     function fetchSurveyData(officeId = "") {
         var surveyCountElement = document.getElementById("officeSurveyCount");
         var satisfactionElement = document.getElementById("overallSatisfaction");
 
-        fetch("{{ route('survey.data') }}?office_id=" + officeId)
-            .then(response => response.json())
+        if (!surveyCountElement || !satisfactionElement) {
+            console.error("Survey count or satisfaction elements not found.");
+            return;
+        }
+
+        fetch("{{ route('survey.data') }}?office_id=" + encodeURIComponent(officeId))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok " + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
                 surveyCountElement.textContent = data.total_responses || "0";
                 satisfactionElement.textContent = data.overall_satisfaction || "0";
-                createCharts(data, data.client_type_data || []);
+
+                if (data.client_type_data && Array.isArray(data.client_type_data)) {
+                    createCharts(data, data.client_type_data);
+                } else {
+                    console.warn("Invalid or missing client_type_data.");
+                    createCharts(data, []);
+                }
             })
             .catch(error => {
-                console.error("Error fetching data:", error);
+                console.error("Error fetching survey data:", error);
                 surveyCountElement.textContent = "Error";
                 satisfactionElement.textContent = "Error";
             });
     }
 
-    document.getElementById("officeFilter").addEventListener("change", function() {
-        fetchSurveyData(this.value);
-    });
+    // Ensure the element exists before adding an event listener
+    document.addEventListener("DOMContentLoaded", function() {
+        var officeFilter = document.getElementById("officeFilter");
+        if (officeFilter) {
+            officeFilter.addEventListener("change", function() {
+                fetchSurveyData(this.value);
+            });
+        } else {
+            console.error("Office filter dropdown not found.");
+        }
 
-    window.onload = function() {
-        fetchSurveyData("");
-    };
+        fetchSurveyData(""); // Fetch initial data on page load
+    });
 </script>
