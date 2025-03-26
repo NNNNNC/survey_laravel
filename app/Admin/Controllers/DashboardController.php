@@ -97,7 +97,7 @@ class DashboardController extends AdminController
         ];
 
         $visibilityLabels = [
-            0 => "N/A",
+            0 => "N/A ",
             1 => "Not visible",
             2 => "Difficult to see",
             3 => "Somewhat easy to see",
@@ -144,6 +144,29 @@ class DashboardController extends AdminController
             return $item;
         });
 
+        // Query to calculate CC satisfaction percentage
+        $ccSatisfactionPercentage = DB::table('surveys')
+            ->join('offices', 'surveys.office_visited', '=', 'offices.id')
+            ->selectRaw("ROUND((SUM(surveys.awareness + surveys.visibility + surveys.helpfulness) / (COUNT(surveys.id) * 11)) * 100, 2) as cc_satisfaction_percentage")
+            ->whereBetween('surveys.awareness', [1, 4])
+            ->whereBetween('surveys.visibility', [0, 4])
+            ->whereBetween('surveys.helpfulness', [0, 3]);
+
+        if (!empty($officeId)) {
+            $ccSatisfactionPercentage->where('offices.id', $officeId);
+        }
+
+        $ccSatisfactionPercentage = $ccSatisfactionPercentage->value('cc_satisfaction_percentage');
+
+        $serviceSatisfactionPercentage = DB::table('surveys')
+            ->join('offices', 'surveys.office_visited', '=', 'offices.id')
+            ->selectRaw("ROUND((SUM(SQD0 + SQD1 + SQD2 + SQD3 + SQD4 + SQD5 + SQD6 + SQD7 + SQD8) / (COUNT(surveys.id) * 9 * 5)) * 100, 2) as service_satisfaction_percentage");
+
+        if (!empty($officeId)) {
+            $serviceSatisfactionPercentage->where('offices.id', $officeId);
+        }
+
+        $serviceSatisfactionPercentage = $serviceSatisfactionPercentage->value('service_satisfaction_percentage');
 
         return response()->json([
             'total_responses' => $totalResponses,
@@ -152,7 +175,9 @@ class DashboardController extends AdminController
             'male_count' => $maleCount,
             'female_count' => $femaleCount,
             'age_distribution' => $ageDistribution,
-            'rating_counts' => $ratingCounts
+            'rating_counts' => $ratingCounts,
+            'cc_satisfaction_percentage' => $ccSatisfactionPercentage ? $ccSatisfactionPercentage . '%' : 'N/A',
+            'service_satisfaction_percentage' => $serviceSatisfactionPercentage ? $serviceSatisfactionPercentage . '%' : 'N/A'
         ]);
     }
 }
