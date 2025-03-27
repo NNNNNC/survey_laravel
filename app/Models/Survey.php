@@ -30,6 +30,7 @@ class Survey extends Model
         'SQD7',
         'SQD8',
         'comments',
+        'email'
     ];
 }
 

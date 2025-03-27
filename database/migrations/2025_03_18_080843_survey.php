@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->integer('SQD7')->default(0);
             $table->integer('SQD8')->default(0);
             $table->text('comments')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
         });
     }

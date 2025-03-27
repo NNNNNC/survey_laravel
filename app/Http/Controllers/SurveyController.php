@@ -102,51 +102,51 @@ class SurveyController extends Controller
     }
 
     public function storeFinal(Request $request): RedirectResponse
-{
-    if (!session()->has('survey_data')) {
-        return redirect()->route('survey.step1')->withErrors(['error' => 'Session expired. Please restart the survey.']);
-    }
-
-    Log::info('Attempting to store final step data.', ['data' => $request->all()]);
-
-
-    $validatedData = $request->validate([
-        'SQD0' => 'required|integer|min:1|max:5',
-        'SQD1' => 'required|integer|min:1|max:5',
-        'SQD2' => 'required|integer|min:1|max:5',
-        'SQD3' => 'required|integer|min:1|max:5',
-        'SQD4' => 'required|integer|min:1|max:5',
-        'SQD5' => 'required|integer|min:1|max:5',
-        'SQD6' => 'required|integer|min:1|max:5',
-        'SQD7' => 'required|integer|min:1|max:5',
-        'SQD8' => 'required|integer|min:1|max:5',
-        'comments' => 'nullable|string|max:1000',
-    ]);
-
-    // Retrieve existing survey data from session and merge it
-    $surveyData = array_merge(session('survey_data', []), $validatedData);
-    session()->put('survey_data', $surveyData);
-
-    Log::info('Final survey data prepared for saving.', ['survey_data' => $surveyData]);
-
-    try {
-        // Ensure the model exists and is properly configured
-        if (class_exists(Survey::class)) {
-            Survey::create($surveyData);
-            Log::info('Survey data saved to database.');
-        } else {
-            Log::warning('Survey model does not exist. Data was not saved to the database.');
+    {
+        if (!session()->has('survey_data')) {
+            return redirect()->route('survey.step1')->withErrors(['error' => 'Session expired. Please restart the survey.']);
         }
-    } catch (\Exception $e) {
-        Log::error('Error saving survey data.', ['error' => $e->getMessage()]);
-        return redirect()->route('survey.step3')->withErrors(['error' => 'An error occurred while saving your survey. Please try again.']);
+
+        Log::info('Attempting to store final step data.', ['data' => $request->all()]);
+
+
+        $validatedData = $request->validate([
+            'SQD0' => 'nullable|integer|min:1|max:5',
+            'SQD1' => 'nullable|integer|min:1|max:5',
+            'SQD2' => 'nullable|integer|min:1|max:5',
+            'SQD3' => 'nullable|integer|min:1|max:5',
+            'SQD4' => 'nullable|integer|min:1|max:5',
+            'SQD5' => 'nullable|integer|min:1|max:5',
+            'SQD6' => 'nullable|integer|min:1|max:5',
+            'SQD7' => 'nullable|integer|min:1|max:5',
+            'SQD8' => 'nullable|integer|min:1|max:5',
+            'comments' => 'nullable|string|max:1000',
+            'email' => 'nullable|email|max:255',
+        ]);
+
+        // Retrieve existing survey data from session and merge it
+        $surveyData = array_merge(session('survey_data', []), $validatedData);
+        session()->put('survey_data', $surveyData);
+
+        Log::info('Final survey data prepared for saving.', ['survey_data' => $surveyData]);
+
+        try {
+            // Ensure the model exists and is properly configured
+            if (class_exists(Survey::class)) {
+                Survey::create($surveyData);
+                Log::info('Survey data saved to database.');
+            } else {
+                Log::warning('Survey model does not exist. Data was not saved to the database.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Error saving survey data.', ['error' => $e->getMessage()]);
+            return redirect()->route('survey.step3')->withErrors(['error' => 'An error occurred while saving your survey. Please try again.']);
+        }
+
+        // Clear session data after saving
+        session()->forget('survey_data');
+        Log::info('Survey session data cleared. Redirecting to home.');
+
+        return redirect()->route('survey.intro')->with('success', 'Thank you for visiting Palawan State University! Your survey has been submitted successfully.');
     }
-
-    // Clear session data after saving
-    session()->forget('survey_data');
-    Log::info('Survey session data cleared. Redirecting to home.');
-
-    return redirect()->route('survey.intro')->with('success', 'Thank you for visiting Palawan State University! Your survey has been submitted successfully.');
-}
-
 }

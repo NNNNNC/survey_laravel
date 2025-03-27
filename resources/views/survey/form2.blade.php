@@ -19,6 +19,10 @@
     .btn {
         font-weight: 700;
     }
+
+    .form-check-input{
+        border-color: #0D6EFD;
+    }
 </style>
 <div class="d-flex justify-content-center align-items-center" style="margin-top: 150px; padding-bottom: 50px;">
     <div class="container shadow p-5 rounded bg-white" style="max-width: 800px;">

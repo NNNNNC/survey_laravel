@@ -16,7 +16,7 @@
     }
 </style>
 
-<div class="d-flex justify-content-center align-items-center vh-100">
+<div class="d-flex justify-content-center align-items-center vh-100" style="z-index: 2;">
     <div class="text-center">
         @if(session('success'))
             <script>

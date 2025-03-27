@@ -35,6 +35,9 @@ class DashboardController extends AdminController
 
         $totalResponses = $query->count();
 
+        $commentsCount = $query->whereNotNull('surveys.comments')
+            ->where('surveys.comments', '!=', '')
+            ->count();
         // Query for overall satisfaction
         $overallSatisfaction = DB::table('surveys')
             ->join('offices', 'surveys.office_visited', '=', 'offices.id')
@@ -168,8 +171,73 @@ class DashboardController extends AdminController
 
         $serviceSatisfactionPercentage = $serviceSatisfactionPercentage->value('service_satisfaction_percentage');
 
+        $sqdCounts = DB::table('surveys')
+            ->selectRaw("'SQD0' as category, SQD0 as rating, COUNT(*) as count")
+            ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+            ->groupBy('SQD0')
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'SQD1' as category, SQD1 as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+                    ->groupBy('SQD1')
+            )
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'SQD2' as category, SQD2 as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+                    ->groupBy('SQD2')
+            )
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'SQD3' as category, SQD3 as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+                    ->groupBy('SQD3')
+            )
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'SQD4' as category, SQD4 as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+                    ->groupBy('SQD4')
+            )
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'SQD5' as category, SQD5 as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+                    ->groupBy('SQD5')
+            )
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'SQD6' as category, SQD6 as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+                    ->groupBy('SQD6')
+            )
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'SQD7' as category, SQD7 as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+                    ->groupBy('SQD7')
+            )
+            ->union(
+                DB::table('surveys')
+                    ->selectRaw("'SQD8' as category, SQD8 as rating, COUNT(*) as count")
+                    ->when($officeId, fn($query) => $query->where('office_visited', $officeId))
+                    ->groupBy('SQD8')
+            )
+            ->orderBy('category')
+            ->orderBy('rating')
+            ->get();
+
+        $emailComments = DB::table('surveys')
+            ->select('email', 'comments', 'created_at')
+            ->whereNotNull('comments')
+            ->where('comments', '!=', '')
+            ->when(!empty($officeId), fn($query) => $query->where('office_visited', $officeId)) // Filter by office
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
         return response()->json([
             'total_responses' => $totalResponses,
+            'comments_count'  => $commentsCount,
             'overall_satisfaction' => $overallSatisfaction ? $overallSatisfaction . '%' : 'N/A',
             'client_type_data' => $clientTypeData,
             'male_count' => $maleCount,
@@ -177,7 +245,9 @@ class DashboardController extends AdminController
             'age_distribution' => $ageDistribution,
             'rating_counts' => $ratingCounts,
             'cc_satisfaction_percentage' => $ccSatisfactionPercentage ? $ccSatisfactionPercentage . '%' : 'N/A',
-            'service_satisfaction_percentage' => $serviceSatisfactionPercentage ? $serviceSatisfactionPercentage . '%' : 'N/A'
+            'service_satisfaction_percentage' => $serviceSatisfactionPercentage ? $serviceSatisfactionPercentage . '%' : 'N/A',
+            'sqd_counts' => $sqdCounts,
+            'email_comments' => $emailComments,
         ]);
     }
 }
