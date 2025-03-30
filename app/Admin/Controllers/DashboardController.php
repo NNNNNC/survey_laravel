@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Admin\Controllers;
 
 use OpenAdmin\Admin\Controllers\AdminController;
@@ -15,10 +16,13 @@ class DashboardController extends AdminController
     {
         $offices = Office::all(); // Fetch all offices for filtering
         $totalSurveys = Survey::count(); // Total number of surveys
+        $offices = Office::all(); // Fetch all offices for filtering
+        $totalSurveys = Survey::count(); // Total number of surveys
 
         return $content
             ->title('Dashboard')
             ->description('Survey Analytics')
+            ->row(view('admin.dashboard', compact('offices', 'totalSurveys')));
             ->row(view('admin.dashboard', compact('offices', 'totalSurveys')));
     }
     public function surveyDataByOffice(Request $request)
@@ -28,7 +32,9 @@ class DashboardController extends AdminController
         // Query for total responses
         $query = DB::table('surveys')
             ->join('offices', 'surveys.office_visited', '=', 'offices.id');
+            ->join('offices', 'surveys.office_visited', '=', 'offices.id');
 
+        if (!empty($officeId)) {
         if (!empty($officeId)) {
             $query->where('offices.id', $officeId);
         }
