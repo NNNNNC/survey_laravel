@@ -23,8 +23,8 @@ class SurveySeeder extends Seeder
 
         for ($i = 0; $i < 500; $i++) {
             $awareness = $faker->numberBetween(1, 4);
-            $visibility = ($awareness == 1) ? 0 : $faker->numberBetween(1, 5);
-            $helpfulness = ($awareness == 1) ? 0 : $faker->numberBetween(1, 4);
+            $visibility = ($awareness == 1) ? 0 : $faker->numberBetween(1, 4);
+            $helpfulness = ($awareness == 1) ? 0 : $faker->numberBetween(1, 3);
             
             // Pick a random office
             $officeId = $faker->numberBetween(1, 5);
@@ -52,6 +52,7 @@ class SurveySeeder extends Seeder
                 'SQD7' => $faker->numberBetween(1, 5),
                 'SQD8' => $faker->numberBetween(1, 5),
                 'comments' => $faker->optional()->sentence(),
+                'email' => $faker->optional()->email(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

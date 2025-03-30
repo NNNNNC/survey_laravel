@@ -59,7 +59,7 @@ class DashboardController extends AdminController
             $overallSatisfaction->where('offices.id', $officeId);
         }
 
-        $overallSatisfaction = $overallSatisfaction->value('overall_satisfaction');
+        $overallSatisfaction = round($overallSatisfaction->value('overall_satisfaction'));
 
         // Query for client type count per month
         $clientTypeData = DB::table('surveys')
@@ -83,11 +83,11 @@ class DashboardController extends AdminController
 
         // Get age distribution
         $ageDistribution = [
-            '< 20'   => DB::table('surveys')->where('age', '<', 20)->when($officeId, fn($query) => $query->where('office_visited', $officeId))->count(),
+            'Less than 20'   => DB::table('surveys')->where('age', '<', 20)->when($officeId, fn($query) => $query->where('office_visited', $officeId))->count(),
             '21-30' => DB::table('surveys')->whereBetween('age', [21, 30])->when($officeId, fn($query) => $query->where('office_visited', $officeId))->count(),
             '31-40' => DB::table('surveys')->whereBetween('age', [31, 40])->when($officeId, fn($query) => $query->where('office_visited', $officeId))->count(),
             '41-50' => DB::table('surveys')->whereBetween('age', [41, 50])->when($officeId, fn($query) => $query->where('office_visited', $officeId))->count(),
-            '> 51'   => DB::table('surveys')->where('age', '>', 51)->when($officeId, fn($query) => $query->where('office_visited', $officeId))->count(),
+            'Greater than 50'   => DB::table('surveys')->where('age', '>', 50)->when($officeId, fn($query) => $query->where('office_visited', $officeId))->count(),
         ];
 
         // Define mappings for the ratings
@@ -159,7 +159,7 @@ class DashboardController extends AdminController
             $ccSatisfactionPercentage->where('offices.id', $officeId);
         }
 
-        $ccSatisfactionPercentage = $ccSatisfactionPercentage->value('cc_satisfaction_percentage');
+        $ccSatisfactionPercentage = round($ccSatisfactionPercentage->value('cc_satisfaction_percentage'));
 
         $serviceSatisfactionPercentage = DB::table('surveys')
             ->join('offices', 'surveys.office_visited', '=', 'offices.id')
@@ -169,7 +169,7 @@ class DashboardController extends AdminController
             $serviceSatisfactionPercentage->where('offices.id', $officeId);
         }
 
-        $serviceSatisfactionPercentage = $serviceSatisfactionPercentage->value('service_satisfaction_percentage');
+        $serviceSatisfactionPercentage = round($serviceSatisfactionPercentage->value('service_satisfaction_percentage'));
 
         $sqdCounts = DB::table('surveys')
             ->selectRaw("'SQD0' as category, SQD0 as rating, COUNT(*) as count")
@@ -235,6 +235,14 @@ class DashboardController extends AdminController
             ->orderBy('created_at', 'DESC')
             ->get();
 
+        $serviceResponses = DB::table('surveys')
+            ->join('services', 'surveys.service', '=', 'services.id')
+            ->select('services.name', DB::raw('COUNT(surveys.service) AS total_response'))
+            ->when(!empty($officeId), fn($query) => $query->where('surveys.office_visited', $officeId)) // Filter by office
+            ->groupBy('services.name')
+            ->orderByDesc('total_response')
+            ->get();
+
         return response()->json([
             'total_responses' => $totalResponses,
             'comments_count'  => $commentsCount,
@@ -248,6 +256,7 @@ class DashboardController extends AdminController
             'service_satisfaction_percentage' => $serviceSatisfactionPercentage ? $serviceSatisfactionPercentage . '%' : 'N/A',
             'sqd_counts' => $sqdCounts,
             'email_comments' => $emailComments,
+            'service_responses' => $serviceResponses
         ]);
     }
 }

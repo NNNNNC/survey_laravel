@@ -10,86 +10,99 @@
             </select>
         </div>
     </div>
+        <div class="row mt-4 mb-4 g-3 justify-content-center">
+            <div class="col-lg-2 col-md-6">
+                <div class="card text-white bg-success h-100 text-center">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title fw-bold">Total Responses</h5>
+                        <p class="card-text display-4" id="officeSurveyCount"></p>
+                    </div>
+                </div>
+            </div>
 
-    <div class="row mt-4 mb-4">
-        <div class="col">
-            <div class="card text-white bg-success h-100">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">Total Responses</h5>
-                    <p class="card-text display-4" id="officeSurveyCount"></p>
+            <div class="col-lg-2 col-md-6">
+                <div class="comment_card card text-white bg-primary h-100 text-center" data-bs-toggle="modal" data-bs-target="#commentsModal" style="cursor: pointer;">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title fw-bold">Total Comments</h5>
+                        <p class="card-text display-4" id="totalComments"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-white bg-info h-100 text-center">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title fw-bold">Citizen's Charter Satisfaction</h5>
+                        <p class="card-text display-4" id="ccSatisfaction"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="card text-white bg-danger h-100 text-center">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title fw-bold">Service Satisfaction</h5>
+                        <p class="card-text display-4" id="serviceSatisfaction"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="card text-white bg-warning h-100 text-center">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title fw-bold">Overall Satisfaction</h5>
+                        <p class="card-text display-4" id="overallSatisfaction"></p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col">
-            <div class="comment_card card text-white bg-primary h-100" data-bs-toggle="modal" data-bs-target="#commentsModal" style="cursor: pointer;">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">Total Comments</h5>
-                    <p class="card-text display-4" id="totalComments"></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card text-white bg-info h-100">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">Citizen's Charter Satisfaction</h5>
-                    <p class="card-text display-4" id="ccSatisfaction"></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card text-white bg-danger h-100">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">Service Satisfaction</h5>
-                    <p class="card-text display-4" id="serviceSatisfaction"></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card text-white bg-warning h-100">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">Overall Satisfaction</h5>
-                    <p class="card-text display-4" id="overallSatisfaction"></p>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
 
     <div class="row">
-        <div class="col-md-3 ">
+        <div class="col-3">
             <div class="card">
                 <div class="card-body text-center">
                     <h4 class="card-title fw-bold">Sex Distribution</h4>
-                    <div style="width: 80%; margin: auto;">
+                    <div style="margin: auto;">
                         <canvas id="sexChart"></canvas>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-4">
             <div class="card">
                 <div class="card-body text-center">
                     <h4 class="card-title fw-bold">Age Distribution</h4>
-                    <div style="width: 80%; margin: auto;">
+                    <div style="margin: auto; width: 90%; height: 100%;">
                         <canvas id="ageChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col">
+        <div class="col-5">
             <div class="card">
                 <div class="card-body text-center">
-                    <h4 class="card-title fw-bold">Client Type Distribution by Month</h4>
-                    <canvas id="clientTypeChart" height="195"></canvas>
+                    <h4 class="card-title fw-bold">Service Distribution</h4>
+                    <div class="container-fluid" style="width: 80%; height: 100%;">
+                        <canvas id="serviceChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4 class="card-title fw-bold">Client Type Distribution on 2025</h4>
+                    <canvas id="clientTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <div class="card">
@@ -111,24 +124,55 @@
                     <div class="d-flex justify-content-center">
                         <div class="row">
                             <div class="col-md-6">
-                                <ul class="list-unstyled">
-                                    <li><strong>SQD0:</strong> I am satisfied with the service that I availed.</li>
-                                    <li><strong>SQD1:</strong> I spent a reasonable amount of time for my transaction.</li>
-                                    <li><strong>SQD2:</strong> The office followed the transaction's requirements and steps.</li>
-                                    <li><strong>SQD3:</strong> The steps for my transaction were easy and simple.</li>
-
-                                </ul>
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>SQD0:</strong></td>
+                                            <td>I am satisfied with the service that I availed.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SQD1:</strong></td>
+                                            <td>I spent a reasonable amount of time for my transaction.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SQD2:</strong></td>
+                                            <td>The office followed the transaction's requirements and steps.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SQD3:</strong></td>
+                                            <td>The steps for my transaction were easy and simple.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SQD4:</strong></td>
+                                            <td>I easily found information about my transaction.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="col-md-6">
-                                <ul class="list-unstyled">
-                                    <li><strong>SQD4:</strong> I easily found information about my transaction.</li>
-                                    <li><strong>SQD5:</strong> I paid a reasonable amount of fees for my transaction.</li>
-                                    <li><strong>SQD6:</strong> I feel the office was fair to everyone, or "walang palakasan".</li>
-                                    <li><strong>SQD7:</strong> I was treated courteously by the staff.</li>
-                                    <li><strong>SQD8:</strong> I got what I needed from the government office.</li>
-                                </ul>
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>SQD5:</strong></td>
+                                            <td>I paid a reasonable amount of fees for my transaction.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SQD6:</strong></td>
+                                            <td>I feel the office was fair to everyone, or "walang palakasan".</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SQD7:</strong></td>
+                                            <td>I was treated courteously by the staff.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SQD8:</strong></td>
+                                            <td>I got what I needed from the government office.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+
                     </div>
 
                     <!-- Chart Canvas -->
@@ -174,7 +218,7 @@
 
 
 
-                    
+
                 </div>
 
                 <ul id="commentsList" class="list-unstyled"></ul>
@@ -188,7 +232,7 @@
 
 
 <script>
-    let sexChart, ageChart, clientTypeChart, ratingsChart, sqdChart;
+    let sexChart, ageChart, serviceChart, clientTypeChart, ratingsChart, sqdChart;
 
     function createCharts(data, clientData) {
         if (sexChart) sexChart.destroy();
@@ -196,12 +240,15 @@
         if (clientTypeChart) clientTypeChart.destroy();
         if (ratingsChart) ratingsChart.destroy();
         if (sqdChart) sqdChart.destroy();
+        if (serviceChart) serviceChart.destroy();
+
 
         const ctxSex = document.getElementById("sexChart").getContext("2d");
         const ctxAge = document.getElementById("ageChart").getContext("2d");
         const ctxClientType = document.getElementById("clientTypeChart")?.getContext("2d");
         const ctxRatings = document.getElementById("ratingsChart").getContext("2d");
         const ctxSqd = document.getElementById("sqdChart")?.getContext("2d");
+        const ctxService = document.getElementById("serviceChart")?.getContext("2d");
 
         // Handle missing or undefined age_distribution
         const ageLabels = data.age_distribution ? Object.keys(data.age_distribution) : [];
@@ -318,7 +365,13 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: "right"
+                        position: "right",
+                        labels: {
+                            boxWidth: 15,
+                            font: {
+                                size: 14
+                            }
+                        }
                     }
                 }
             }
@@ -339,7 +392,47 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: "right"
+                        position: "right",
+                        labels: {
+                            boxWidth: 15,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const service_labels = data.service_responses.map(item => item.name);
+        const service_values = data.service_responses.map(item => item.total_response);
+        const backgroundColors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+            '#9966FF', '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56'
+        ];
+
+        serviceChart = new Chart(ctxService, {
+            type: "doughnut",
+            data: {
+                labels: service_labels,
+                datasets: [{
+                    data: service_values,
+                    backgroundColor: backgroundColors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "right",
+                        labels: {
+                            boxWidth: 15,
+                            font: {
+                                size: 14
+                            }
+                        }
                     }
                 }
             }
@@ -398,8 +491,7 @@
                     scales: {
                         x: {
                             title: {
-                                display: true,
-                                text: "Current Year 2025"
+                                display: false,
                             }
                         },
                         y: {
@@ -510,8 +602,6 @@
                 return response.json();
             })
             .then(data => {
-                console.log("Fetched data:", data); // Debugging log
-
                 surveyCountElement.textContent = data.total_responses || "0";
                 commentCountElement.textContent = data.comments_count || "0";
                 satisfactionElement.textContent = data.overall_satisfaction || "0%";
@@ -538,7 +628,7 @@
 
                         commentItem.innerHTML =
                             `<p style="font-size: 16px;">
-                            <strong>${email}:</strong> <br>
+                            <strong class="text-primary">${email}:</strong> <br>
                             <small class="text-muted" style="font-size: 14px;">${entry.created_at}</small><br><br>
                             <span style="font-size: 18px;">${entry.comments}</span>
                             </p>`;

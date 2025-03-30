@@ -20,7 +20,9 @@
     .btn {
         font-weight: 700;
     }
-
+    .form-check-input{
+        border-color: black;
+    }
     input,
     select,
     textarea {

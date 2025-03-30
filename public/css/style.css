@@ -21,3 +21,15 @@ body {
     z-index: 2;
 }
 
+.chart-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#serviceChart {
+    width: 100% !important;
+    height: 100% !important;
+}
